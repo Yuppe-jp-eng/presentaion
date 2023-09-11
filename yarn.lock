@@ -423,7 +423,7 @@
   dependencies:
     "@iconify/types" "*"
 
-"@iconify-json/ph@^1.1.5":
+"@iconify-json/ph@^1.1.5", "@iconify-json/ph@^1.1.6":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@iconify-json/ph/-/ph-1.1.6.tgz#bbb7a3589199d91d8298bc084c4e893c8821ad8e"
   integrity sha512-dexzEndlXQX/sbQhnEpA94Pby6JCGV2tZToSGcPPQpbilDGyk5VMd0ymusYoocRAn6+qLpGRvMoz5XFKGqP+VA==
