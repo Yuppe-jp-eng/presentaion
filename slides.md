@@ -16,7 +16,7 @@ title: Welcome to Slidev
 ---
 
 # 中村勉強会　<br>〜AWSインフラ編〜 <br> Codeサービス系 
-# #2 組み立て工場見学!ざっくりとパイプライン、ビルド、デプロイの中を覗く
+# #2 組み立て工場見学!ざっくりとパイプラインを外観する
 
 ---
 transition: fade-out
@@ -25,14 +25,15 @@ transition: fade-out
 # この勉強会の目標
 
 <br>
-<h2>・CodePipeline,Build,Deploy,Artifactがどのような役割を担うかを理解する</h2>
+<h2>・CodePipelineがどのようにしてCI/CDフローを形成するかを理解する</h2>
 <br>
-<h2>・CodeBuildとDeployに関して、それぞれに必要な設定ファイルの種類と中身をざっくり理解する</h2>
+<h2>・CodePipelineの主要概念を理解する</h2>
 <br>
-<h2>・マネコン/CDKでの実装方法をふわっと理解する</h2>
+<h2>・マネコン/CDKでの実装方法を理解する</h2>
 
 <style>
 h1 {
+  fontsize: 20px;
   background-color: #2B90B6;
   background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
   background-size: 100%;
@@ -53,20 +54,30 @@ transition: fade-out
 ## 0. 軽く前回のおさらい
 <br>
 
-## 1. CodePipeline
+## 1. CodePipelineの役割
 <br>
 
-## 2. CodeBuild/CodeArtifact
+## 2. 工場見学①原料調達
 <br>
 
-## 3. CodeDeploy
+## 3. 工場見学②加工場
+<br>
+
+## 4. CodePipelineの主要概念
+---
+transition: fade-out
+layout: center
+class: text-center
+---
+
+<h1>0.前回のおさらい</h1>
+
+
 ---
 transition: fade-out
 ---
 
-# 0.前回のおさらい
-
-## CI/CDとは？
+# CI/CDとは？
 
 <br>
 
@@ -100,9 +111,7 @@ graph TD
 transition: fade-out
 ---
 
-# 0.前回のおさらい
-
-## 高速なフィードバックループの実現
+# 高速なフィードバックループの実現
 
 <div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
 <div>
@@ -137,9 +146,7 @@ graph LR
 transition: fade-out
 ---
 
-# 0.前回のおさらい
-
-## もう一つの幸せスパイラルを生む
+# もう一つの幸せスパイラル
 
 <br>
 
@@ -163,9 +170,7 @@ graph LR
 transition: fade-out
 ---
 
-# 0.前回のおさらい
-
-## 実はCI/CDツールはたくさんある
+# 実はCI/CDツールはたくさんある
 ## →CircleCI,Jenkins,GitLab,GitHub Actions, Azure,GCP系サービス
 
 
@@ -192,7 +197,7 @@ transition: fade-out
 transition: fade-out
 ---
 
-# 0.前回のおさらい
+# AWSのCode系サービス
 1. CodePipeline...パイプライン(流れ)を定義
 2. CodeCommit/Artifact...GitHubのAWS版、ソースストレージ
 3. CodeBuild...ビルドのための環境を素早く用意、ビルドプロセスの構築
@@ -207,47 +212,72 @@ ____
 
 ---
 transition: fade-out
+layout: center
+class: text-center
 ---
 
-# 1.CodePipeline/CodeCommit
+<h1 style="fontsize: 50px;">1.CodePipelineの役割</h1> 
 
+---
+transition: fade-out
+---
 ## ある機械製品が出来上がるまでの流れ
 
 <br>
-
-
-<p></p>
+<p v-click >
 ```mermaid
 flowchart LR
-    A1[原材料調達] --> A2[加工場]
+    A1[原料調達] --> A6[集積所]
+    A6 --> A2[加工場]
     A2 --> A4[集積所]
     A4 --> A5[組み立て場]
-    A5 --> A3[配送]
+    A5 --> A7[集積所]
+    A7 --> A3[配送業者]
+
+    subgraph 集積所エリア
+        A6
+        A4
+        A7
+    end
 
     style A1 fill:#FF5555,stroke:#FFF,stroke-width:2px,color:#FFF
     style A2 fill:#FFAA55,stroke:#FFF,stroke-width:2px,color:#FFF
     style A3 fill:#FFFF55,stroke:#000,stroke-width:2px,color:#000
     style A4 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
     style A5 fill:#FFAA55,stroke:#FFF,stroke-width:2px,color:#FFF
+    style A6 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
+    style A7 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
 
 ```
+</p>
 
-<br>
+<p v-click >
 
-
-<h2 v-click><span style="color:red">CodePipeline</span>はこの一連のプロセス設計を担う</h2>
-
-<p v-click>
 ```mermaid
 flowchart LR
-    B1[CodeCommit] --> B2[CodeBuild]
-    B2 --> B4[CodeArtifact and ECR]
-    B4 --> B3[CodeDeploy]
+    B0[GitHub] -. "CodeStar" .-> B6[Artifact:ソースコード]
+    B1[CodeCommit] --> B6
+    B6 --> B2[CodeBuild]
+    B2 -- "設定ファイル①" --> B4[Artifact]
+    B4 -- "設定ファイル①" --> B5[CodeBuild]
+    B5 --> B7[Artifact]
+    B7 --> B3[CodeDeploy]
 
+    subgraph Artifactエリア
+        B6
+        B4
+        B7
+    end
+
+    style B0 fill:#FF5555,stroke:#FFF,stroke-width:2px,color:#FFF
     style B1 fill:#FF5555,stroke:#FFF,stroke-width:2px,color:#FFF
     style B2 fill:#FFAA55,stroke:#FFF,stroke-width:2px,color:#FFF
     style B3 fill:#FFFF55,stroke:#000,stroke-width:2px,color:#000
     style B4 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
+    style B5 fill:#FFAA55,stroke:#FFF,stroke-width:2px,color:#FFF
+    style B6 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
+    style B7 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
+
 
 ```
 </p>
@@ -256,121 +286,146 @@ flowchart LR
 transition: fade-out
 ---
 
-# 1.CI/CDの重要性
-
-## 高速なフィードバックループの実現
+# 原料調達
 
 <div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
 <div>
 
 <br>
 ```mermaid
-graph LR
-    A[開発] --> B[テスト]
-    B --> C[デプロイ]
-    C --> D[フィードバック]
-    D --> A
+flowchart LR
+    B0[GitHub] -. "CodeStar" .-> B2[CodeBuild]
+    B1[CodeCommit] --> B2
+
+    style B0 fill:#FF5555,stroke:#FFF,stroke-width:2px,color:#FFF
+    style B1 fill:#FF5555,stroke:#FFF,stroke-width:2px,color:#FFF
+    style B2 fill:#FFAA55,stroke:#FFF,stroke-width
 
 ```
 
-</div>
-<div>
+<br>
 
-## ①アプリケーションの品質安定
+## ①接続先の設定
 
 <br>
 
-## ②手動運用時に起こりうるヒューマンエラーの削減
-
-
-</div>
+## ②外部プロバイダーを挟む場合、一工夫必要(GitHubとの連携にはCodeStarが簡単)
 </div>
 
-### だけではなく...
-
-
----
-transition: fade-out
----
-
-# 1.CI/CDの重要性
-
-## もう一つの幸せスパイラルを生む
-
-<br>
-
-```mermaid
-graph LR
-    A[CI/CDの導入/進化] --> B[アプリの品質の安定]
-    B --> C[心と時間の余裕]
-    C --> D[開発、テスト、運用整理などに割ける時間の増加]
-    D --> B
-
-```
-<div grid="~ cols-2 gap-3">
-
-<img border="rounded" src="/ref/image/yopparai_beach.png" width="120" height="150">
-
-<img border="rounded" src="/ref/image/yopparai_beach.png" width="120" height="150">
-
+   <div style="margin-bottom: 100px;">
+   <img border="rounded" src="/ref/image/code_services2/source_codecommit.png" width="600">
+   </div>
 </div>
 
 ---
 transition: fade-out
 ---
 
-# 2.実現手段と選定理由
+# CodeStar Connectionsを利用してGitHubと接続する
 
-## 実はCI/CDツールはたくさんある
-## →CircleCI,Jenkins,GitLab,GitHub Actions, Azure,GCP系サービス
+<div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
+   <div style="margin-bottom: 100px;">
+   <img border="rounded" src="/ref/image/code_services2/source_github.png" width="600">
+   </div>
+   <div>
 
+   ## ①Sourceステージでトリガー先の設定をする
 
-## 結論:AWSのサービス群を選択
+   <br>
+   
+   ## ②CodeStar Connectionsで取得した接続ARN(後述)を入力
 
-<br>
+   <br>
 
-## 1.信頼と実績
+   ## ③トリガー先リポジトリ、ブランチを選択
 
-### ・すでにプロトが用意してあって、最低限のCI構築はできていた
-### ・CodeDeployだけ一応使ったことがあった
-<br>
-
-## 2.応用可能性/親和性
-
-### ・その他インフラリソースとの親和性
-
-### ・IaCサービス(AWS Cloud Development Kit)との親和性
-
-## 3.学習コスト
-### ・学習コストのことだけ考えれば、基本的にサードパーティ製のツールはない方がいい
+   </div>
+</div>
 
 ---
 transition: fade-out
 ---
 
-# 3.CI/CDに関わるCode〇〇サービス
-1. CodePipeline...パイプライン(流れ)を定義
-2. CodeCommit/Artifact...GitHubのAWS版、ソースストレージ
-3. CodeBuild...ビルドのための環境を素早く用意、ビルドプロセスの構築
-4. CodeDeploy...デプロイ
+# CodeStar Connectionsの接続を作成する
 
-____
-よりマネージドなCI/CDサービス
+<div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
+   <div style="margin-bottom: 100px;">
 
-5. CodeGuru...リッチでニッチな使い道(機械学習使ったコードレビュー)
-6. CodeStar...CI/CDめっちゃマネージド(テンプレから選べる)
-7. CodeCatalyst...メンバーオンボーディング、IDE連携、CodeStar+CDK構築まで一気通貫(マネージドの鬼)、コツを掴めば、爆速開発環境、インフラ、パイプライン構築可能かも
+   ### ①接続の作成
+
+   <img border="rounded" src="/ref/image/code_services2/codestar1.png" width="600">
+   </div>
+   <div>
+
+   ### ②GitHubを選択し、接続名を入力
+   <img border="rounded" src="/ref/image/code_services2/codestar2.png" width="600">
+   </div>
+</div>
 
 ---
 transition: fade-out
 ---
 
-# 3.CI/CDに関わるCode〇〇サービス
+# 使用する認証アプリの設定
 
-改めて整理する(していただく)と
+<div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
+   <div style="margin-bottom: 100px;">
 
-<img border="rounded" src="/ref/image/flow.png" >
-引用元:https://pages.awscloud.com/rs/112-TZM-766/images/20210126_BlackBelt_CodeDeploy.pdf
+   ### ③どのアカウントにインストールされたアプリを使うか選択
+
+   <img border="rounded" src="/ref/image/code_services2/codestar3.png" width="600">
+   </div>
+   <div>
+
+   ### ④新しいアプリをインストールを選択すると設定にいける
+   <img border="rounded" src="/ref/image/code_services2/codestar4.png" width="500" height="100">
+   </div>
+
+</div>
+
+---
+transition: fade-out
+---
+
+# 設定確認
+
+<div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
+   <div style="margin-bottom: 100px;">
+
+   ### ⑤パスワード入力
+
+   <img border="rounded" src="/ref/image/code_services2/codestar5.png" width="400">
+   </div>
+   <div>
+
+   ### ⑥ インストールアプリの設定変更
+   <img border="rounded" src="/ref/image/code_services2/codestar6.png" width="600" height="200">
+
+   </div>
+
+</div>
+
+---
+transition: fade-out
+---
+
+# 対象リポジトリの追加とARNの確認
+
+<div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
+   <div style="margin-bottom: 100px;">
+
+   ### ⑤対象リポジトリの追加
+
+   <img border="rounded" src="/ref/image/code_services2/codestar7.png" width="400">
+   </div>
+   <div>
+
+   ### ⑥ ARN確認
+   <img border="rounded" src="/ref/image/code_services2/codestar8.png" width="600" height="200">
+
+   </div>
+
+</div>
 
 ---
 transition: fade-out
