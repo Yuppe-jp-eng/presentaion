@@ -63,7 +63,13 @@ transition: fade-out
 ## 3. 工場見学②加工場
 <br>
 
-## 4. CodePipelineの主要概念
+## 4. 工場見学③配送業者
+<br>
+
+## 5. CodePipelineの主要概念
+<br>
+
+## 6.主要概念を反映したCDKコード
 ---
 transition: fade-out
 layout: center
@@ -198,8 +204,8 @@ transition: fade-out
 ---
 
 # AWSのCode系サービス
-1. CodePipeline...パイプライン(流れ)を定義
-2. CodeCommit/Artifact...GitHubのAWS版、ソースストレージ
+1. CodePipeline/Artifact...パイプライン(流れ)を定義、ソースストレージ
+2. CodeCommit...GitHubのAWS版
 3. CodeBuild...ビルドのための環境を素早く用意、ビルドプロセスの構築
 4. CodeDeploy...デプロイ
 
@@ -282,6 +288,13 @@ flowchart LR
 ```
 </p>
 
+---
+transition: fade-out
+layout: center
+class: text-center
+---
+
+<h1 style="fontsize: 50px;">2.工場見学①原料調達</h1> 
 ---
 transition: fade-out
 ---
@@ -429,176 +442,234 @@ transition: fade-out
 
 ---
 transition: fade-out
+layout: center
+class: text-center
 ---
 
-# まとめ
-
-## ・AWSのCodeなんちゃらサービスはたくさんある
-
-<br>
-
-## ・CI/CDというか、運用構築は早めに取り組んだ方がいい
-<br>
-
-## ・Codeなんちゃらは整理すれば意外と分かりやすい
-
-<br>
-
-## ・次回はCodePipeline、CodeBuildをやりたい
+<h1 style="fontsize: 50px;">3.工場見学②加工場</h1> 
 
 ---
 transition: fade-out
 ---
 
-## ①CI(Continuous Integration)
-→ コードの変更を<span style="color: red;">継続的に</span>統合する過程(ビルド、テスト)
-
-```mermaid
-graph TD
-    A[Build]
-    B[Bundle]
-    C[Compile]
-    D[Other Tasks]
-    E(Merge multiple files into one)
-    F(Convert source code to executable code)
-    G(Installation, Optimization, Minification, Linting etc.)
-    
-    A --> B
-    A --> C
-    A --> D
-    B --> E
-    C --> F
-    D --> G
-```
-
-<br>
-
-## ②CD(Continuous Deployment/Delivery)
-→ 統合されたコードを実環境に<span style="color: red;">継続的に</span>反映させる過程(デプロイ)
-
----
-transition: fade-out
----
-
-# 0.前回のおさらい
-
-## 高速なフィードバックループの実現
+# 加工場(CodeBuild)
 
 <div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
 <div>
 
 <br>
-```mermaid
-graph LR
-    A[開発] --> B[テスト]
-    B --> C[デプロイ]
-    C --> D[フィードバック]
-    D --> A
 
+```mermaid
+flowchart LR
+    B6[Artifact : ソースコード] --> B2[CodeBuild]
+    B2 --> B4[Artifact：設定ファイル、成果物]
+
+    style B2 fill:#FFAA55,stroke:#FFF,stroke-width:2px,color:#FFF
+    style B4 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
+    style B6 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
 ```
 
+<br>
+
+## ①ビルド、テスト環境の設定
+
+<br>
+
+## ②CodeBuildではビルドごとにプロジェクトというものを作成する
+
+<br>
+
+## ③ビルド環境に入れておく環境変数の設定
+
 </div>
+
+   <div style="margin-bottom: 100px;">
+   <img border="rounded" src="/ref/image/code_services2/codebuild1.png" width="600">
+   </div>
+</div>
+
+---
+transition: fade-out
+layout: center
+class: text-center
+---
+
+<h1 style="fontsize: 50px;">4.工場見学③配送業者</h1> 
+
+---
+transition: fade-out
+---
+
+# 配送業者(CodeDeploy)
+
+<div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
 <div>
 
-## ①アプリケーションの品質安定
-
-<br>
-
-## ②手動運用時に起こりうるヒューマンエラーの削減
-
-
-</div>
-</div>
-
-### だけではなく...
-
-
----
-transition: fade-out
----
-
-# 0.前回のおさらい
-
-## もう一つの幸せスパイラルを生む
-
 <br>
 
 ```mermaid
-graph LR
-    A[CI/CDの導入/進化] --> B[アプリの品質の安定]
-    B --> C[心と時間の余裕]
-    C --> D[開発、テスト、運用整理などに割ける時間の増加]
-    D --> B
+flowchart LR
+    B7[Artifact] --> B3[CodeDeploy]
 
+    style B3 fill:#FFFF55,stroke:#000,stroke-width:2px,color:#000
+    style B7 fill:#55AAFF,stroke:#FFF,stroke-width:2px,color:#FFF
 ```
-<div grid="~ cols-2 gap-3">
 
-<img border="rounded" src="/ref/image/yopparai_beach.png" width="120" height="150">
+<br>
 
-<img border="rounded" src="/ref/image/yopparai_beach.png" width="120" height="150">
+## ①特定のプロバイダーを選択すると配送業者として選択可能
 
+<br>
+
+## ②デプロイ先(お届け先)の設定、デプロイ内容(お届け物)の設定
+
+<br>
+
+## ③お届け先や中身によって設定や配送形態が結構変わる
+
+</div>
+
+   <div style="margin-bottom: 100px;">
+   <img border="rounded" src="/ref/image/code_services2/codedeploy2.png" width="600">
+   </div>
 </div>
 
 ---
 transition: fade-out
 ---
 
-# 0.前回のおさらい
+# 結果的に
 
-## 実はCI/CDツールはたくさんある
-## →CircleCI,Jenkins,GitLab,GitHub Actions, Azure,GCP系サービス
+<div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
+    <div>
+    <img border="rounded" src="/ref/image/code_services2/result.png" width="600">
+    </div>
+
+   <div style="margin-bottom: 100px;">
+   <img border="rounded" src="/ref/image/code_services2/result2.png" width="600">
+   </div>
+</div>
 
 
-## 結論:AWSのサービス群を選択
+---
+transition: fade-out
+layout: center
+class: text-center
+---
 
-<br>
-
-## 1.信頼と実績
-
-### ・すでにプロトが用意してあって、最低限のCI構築はできていた
-### ・CodeDeployだけ一応使ったことがあった
-<br>
-
-## 2.応用可能性/親和性
-
-### ・その他インフラリソースとの親和性
-
-### ・IaCサービス(AWS Cloud Development Kit)との親和性
-
-## 3.学習コスト
-### ・学習コストのことだけ考えれば、基本的にサードパーティ製のツールはない方がいい
+<h1 style="fontsize: 50px;">5.CodePipelineの主要概念</h1> 
 
 ---
 transition: fade-out
 ---
 
-# 0.前回のおさらい
-1. CodePipeline...パイプライン(流れ)を定義
-2. CodeCommit/Artifact...GitHubのAWS版、ソースストレージ
-3. CodeBuild...ビルドのための環境を素早く用意、ビルドプロセスの構築
-4. CodeDeploy...デプロイ
+# CodePipelineの主要概念
 
-____
-よりマネージドなCI/CDサービス
+<div  style="margin-bottom: 10px; width:100%;">
+   <img border="rounded" src="/ref/image/code_services2/pipeline_overview.png" width="700">
+</div>
 
-5. CodeGuru...リッチでニッチな使い道(機械学習使ったコードレビュー)
-6. CodeStar...CI/CDめっちゃマネージド(テンプレから選べる)
-7. CodeCatalyst...メンバーオンボーディング、IDE連携、CodeStar+CDK構築まで一気通貫(マネージドの鬼)、コツを掴めば、爆速開発環境、インフラ、パイプライン構築可能かも
+---
+transition: fade-out
+layout: center
+class: text-center
+---
+
+<h1 style="fontsize: 50px;">6.主要概念を反映したCDKコード</h1> 
 
 ---
 transition: fade-out
 ---
 
-# 3.CI/CDに関わるCode〇〇サービス
+# 主要概念を反映したCDKコード
+<div grid="~ cols-2 gap-3" style="margin-bottom: 100px;">
+<div>
 
-改めて整理する(していただく)と
+```ts {all|1-2|3-7|8-12|13-22|all}
+import { Artifact, Pipeline } from 'aws-cdk-lib/aws-codepipeline';
+import { CodeBuildAction, CodeStarConnectionsSourceAction, ManualApprovalAction } from 'aws-cdk-lib/aws-codepipeline-actions';
 
-<img border="rounded" src="/ref/image/flow.png" >
-引用元:https://pages.awscloud.com/rs/112-TZM-766/images/20210126_BlackBelt_CodeDeploy.pdf
+   const pipeline: Pipeline = new Pipeline(this, `${prefix}-pipeline`, {
+       pipelineName: `${prefix}-app-pipeline`,
+       crossAccountKeys: false,
+   });
+
+    // Artifactの設定
+     const sourceOutput: Artifact = new Artifact('sourceArtifact');
+     const buildspecOutput: Artifact = new Artifact('buildArtifact');
+     const buildspecForDeployOutput: Artifact = new Artifact('deployArtifact')
+
+    // ソースアクションの設定
+     const sourceAction: CodeStarConnectionsSourceAction = new CodeStarConnectionsSourceAction({
+         actionName: 'GitHubSource',
+         connectionArn: SCP_REPO_CONNECTION_ARN,
+         owner: PROJECT_OWNER,
+         repo: APP_REPO,
+         branch: envConf.appSettings.deployTriggerBranch,
+         output: sourceOutput,
+     });
+
+```
+</div>
+
+<div>
+
+```ts {all|1-5|5-15|13-17|18-24|all}
+     // ソースステージの追加
+     pipeline.addStage({
+         stageName: 'Source',
+         actions: [sourceAction],
+     });
+     // ビルドステージの追加
+     pipeline.addStage({
+         stageName: 'Build',
+         actions: [new CodeBuildAction({
+             actionName: 'DockerEcspressoBuild',
+             project: project,
+             input: sourceOutput,
+             outputs: [buildspecOutput],
+         })],
+     });
+
+     // ecspressoによるデプロイ
+     pipeline.addStage({
+         stageName: 'Deploy',
+         actions: [new CodeBuildAction({
+             actionName: 'EcspressoDeploy',
+             project: deployProject,
+             input: buildspecOutput,
+             outputs: [buildspecForDeployOutput],
+         })]
+     });
+```
+
+</div>
+
+</div>
+
+---
+transition: fade-out
+layout: center
+class: text-center
+---
+
+<h1 style="fontsize: 50px;">まとめ</h1> 
+
 
 ---
 transition: fade-out
 ---
-
 
 # まとめ
+## ・CodePipelineは一つの加工製品の原料調達→加工→配送の流れを形成すると考えるとわかりやすいかもしれない
+
+<br>
+
+## ・CodePipelineにはパイプライン、ステージ、アクションという重要な概念がある
+<br>
+
+## ・AWSサービス自体への理解が捗ると、CDKを書くのが上手になる
+
+<br>
+
+## ・次回はCodeBuildを深掘りたい
