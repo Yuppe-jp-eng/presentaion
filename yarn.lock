@@ -754,6 +754,11 @@
   resolved "https://registry.yarnpkg.com/@slidev/types/-/types-0.47.5.tgz#53715dfabf25aa54893dfaa8de5d67027bdd6370"
   integrity sha512-X67V4cCgM0Sz50bP8GbVzmiL8DHC2IXvdKcsN7DlxHyf+/T4d9GveeGukwha5Fx3MuYeGZWKag7TFL2ZY4w54A==
 
+"@slidev/types@^0.22.7":
+  version "0.22.7"
+  resolved "https://registry.npmjs.org/@slidev/types/-/types-0.22.7.tgz"
+  integrity sha512-mCVKQbcGTv6d6n9aHpYNp5U04HF+FMbpY083vqpJ6Folc805BB1Am02eubaW0J6nM+dSOu2dDgPY+kIjs75sAQ==
+
 "@types/d3-scale-chromatic@^3.0.0":
   version "3.0.0"
   resolved "https://registry.npmjs.org/@types/d3-scale-chromatic/-/d3-scale-chromatic-3.0.0.tgz"
@@ -3364,6 +3369,18 @@ plantuml-encoder@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/plantuml-encoder/-/plantuml-encoder-1.4.0.tgz"
   integrity sha512-sxMwpDw/ySY1WB2CE3+IdMuEcWibJ72DDOsXLkSmEaSzwEUaYBT6DWgOfBiHGCux4q433X6+OEFWjlVqp7gL6g==
+
+playwright-chromium@^1.38.0:
+  version "1.38.0"
+  resolved "https://registry.yarnpkg.com/playwright-chromium/-/playwright-chromium-1.38.0.tgz#a84525e902969d5f6bf182dfb1ef24047c83b067"
+  integrity sha512-RoqqEMsBwOh7yfnb8hL/QEjd7O767GTqDLL6ZOg8tJtMoHc/66GS6Dl3ODWhLxrkAk6gVkprB0H1RYHnT9F7dg==
+  dependencies:
+    playwright-core "1.38.0"
+
+playwright-core@1.38.0:
+  version "1.38.0"
+  resolved "https://registry.npmjs.org/playwright-core/-/playwright-core-1.38.0.tgz"
+  integrity sha512-f8z1y8J9zvmHoEhKgspmCvOExF2XdcxMW8jNRuX4vkQFrzV4MlZ55iwb5QeyiFQgOFCUolXiRHgpjSEnqvO48g==
 
 popmotion@^11.0.5:
   version "11.0.5"
